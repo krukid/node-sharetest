@@ -2,9 +2,8 @@ version: "3"
 services:
   sharepage: &foo
     image: node
-    command:
-      - yarn
-      - start
+    command: >
+      /bin/bash -c "yarn && yarn start"
     working_dir: /app
     volumes:
       - .:/app
@@ -13,7 +12,5 @@ services:
 
   sharepage_dev:
     <<: *foo
-    command:
-      - tail
-      - -f
-      - /dev/null
+    command: >
+      /usr/bin/tail -f /dev/null
