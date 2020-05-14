@@ -1,0 +1,12 @@
+version: "3"
+services:
+  sharepage:
+    image: node
+    command:
+      - yarn
+      - start
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
