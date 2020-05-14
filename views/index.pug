@@ -1,0 +1,64 @@
+html
+    body
+        form(target="json_result" action="/urls" method="GET")
+            h1 Fetch images
+
+            label JSON URL
+            br
+            input(name="url" list="dl_json_url")
+
+            br
+            label JQ Filter
+            a(href="https://stedolan.github.io/jq/tutorial/" target="_blank") ℹ️
+            br
+            input(name="filter" list="dl_json_filter")
+
+            button Request
+
+            datalist#dl_json_url
+                option(value="https://f3.cool/api/v1/web/users/krukid/highlights?offset=0&limit=30")
+        
+            datalist#dl_json_filter
+                option(value="[.data[].photo.sizes[1].url | select(.)]")
+        
+        iframe(name="json_result")
+
+        form(target="image_result" action="/story" method="GET")
+            h1 Story generator
+
+            label Image URL
+            br
+            input(name="url" list="dl_image_url")
+
+            br
+            label Image Geometry
+            a(href="http://www.graphicsmagick.org/GraphicsMagick.html#details-geometry" target="_blank") ℹ️
+            br
+            input(name="crop" list="dl_image_crop")
+
+            br
+            label Image Gravity
+            a(href="http://www.graphicsmagick.org/GraphicsMagick.html#details-gravity" target="_blank") ℹ️
+            br
+            input(name="gravity" list="dl_image_gravity")
+
+            button Create
+
+            datalist#dl_image_url
+                option(value="https://img0.f3.cool/z6sMQnl/PyPMs8K4R_540x960_background.png")
+        
+            datalist#dl_image_crop
+                option(value="600x300+0+0")
+        
+            datalist#dl_image_gravity
+                option(value="NorthWest")
+                option(value="North")
+                option(value="NorthEast")
+                option(value="West")
+                option(value="Center")
+                option(value="East")
+                option(value="SouthWest")
+                option(value="South")
+                option(value="SouthEast")
+
+        iframe(name="image_result")

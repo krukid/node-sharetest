@@ -1,6 +1,6 @@
 version: "3"
 services:
-  sharepage:
+  sharepage: &foo
     image: node
     command:
       - yarn
@@ -10,3 +10,10 @@ services:
       - .:/app
     ports:
       - "3000:3000"
+
+  sharepage_dev:
+    <<: *foo
+    command:
+      - tail
+      - -f
+      - /dev/null

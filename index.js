@@ -1,59 +1,50 @@
 const PORT = 3000
 
+const util = require('util')
 const qs = require('querystring')
 const express = require('express')
 const request = require('request')
+const requestp = util.promisify(request)
+const jq = require('node-jq')
 const gm = require('gm').subClass({imageMagick: true})
 
 const app = express()
 
+app.set('view engine', 'pug')
+
 app.use(express.static('static'))
 
 app.get('/crop', function(req, res) {
-  const {w, h, x, y, url} = req.query
+  const {url, crop, gravity} = req.query
   gm(request(url))
-    .crop(w, h, x, y)
+    .gravity(gravity)
+    .out('-crop', crop)
     .stream('png')
     .pipe(res)
 })
 
 app.get('/story', function(req, res) {
-  const {w, h, x, y, url} = req.query
-  const query = qs.stringify({w, h, x, y, url})
+  const {url, crop, gravity} = req.query
+  const query = qs.stringify({url, crop, gravity})
   const img = `/crop?${query}`
-  res.type('html').status(200).send(`
-   <!doctype html>
-   <html>
-   <head>
-     <title>This is a story of image ${img}</title>
-     <meta property="vk:image" content="${img}">
-   </head>
-   <body>
-     <img src="${img}">
-   </body>
-   </html>
-  `)
+  res.render('story', {img})
 })
 
+app.get('/urls', async function(req, res) {
+  const {url, filter} = req.query
+  const {body} = await requestp(url)
+  const urls = await jq.run(filter, body, {input: 'string'})
+  res.status(200).type('json').send(urls)
+})
+
+/**
+ * 1. fetch by url + jq filter image urls into select
+ * 2. parse crop query 0,100,100%,200
+ * 3. render into frame, create share link
+ */
+
 app.get('/', function(req, res) {
-  res.type('html').status(200).send(`
-    <!doctype html>
-    <html>
-    <body>
-      <form target="_blank" action="/story" method="GET">
-        <h1>Story generator</h1>
-        <label>Story image URL</label>
-        <br><input name="url">
-        <br><label>Crop Y</label>
-        <br><input name="y">
-        <input type="hidden" name="x" value="0">
-        <input type="hidden" name="w" value="360">
-        <input type="hidden" name="h" value="100">
-        <button>Create</button>
-      </form>
-    </body>
-    </html>
-  `)
+  res.render('index')
 })
 
 app.listen(PORT, function() {
