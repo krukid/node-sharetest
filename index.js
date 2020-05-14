@@ -14,6 +14,11 @@ app.set('view engine', 'pug')
 
 app.use(express.static('static'))
 
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`)
+  next()
+})
+
 app.get('/crop', function(req, res) {
   const {url, crop, gravity} = req.query
   gm(request(url))
