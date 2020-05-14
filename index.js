@@ -27,7 +27,7 @@ app.get('/story', function(req, res) {
   const {url, crop, gravity} = req.query
   const query = qs.stringify({url, crop, gravity})
   const img = `/crop?${query}`
-  res.render('story', {img})
+  res.render('story', {img, url: req.url})
 })
 
 app.get('/urls', async function(req, res) {
@@ -36,12 +36,6 @@ app.get('/urls', async function(req, res) {
   const urls = await jq.run(filter, body, {input: 'string'})
   res.status(200).type('json').send(urls)
 })
-
-/**
- * 1. fetch by url + jq filter image urls into select
- * 2. parse crop query 0,100,100%,200
- * 3. render into frame, create share link
- */
 
 app.get('/', function(req, res) {
   res.render('index')
