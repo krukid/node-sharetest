@@ -12,15 +12,8 @@ x-proto: &proto
 services:
   sharepage:
     <<: *proto
-    networks:
-      - www_default
 
   sharepage_dev:
     <<: *proto
     command: >
       /usr/bin/tail -f /dev/null
-
-networks:
-  www_default:
-    external:
-      name: www_default
