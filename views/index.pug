@@ -9,7 +9,7 @@ html
         .container-md.py-4
             h1 Fetch images
             .row
-                form.col(target="json_result" action="/urls" method="GET")
+                form.col(target="json_result" action="urls" method="GET")
                     .form-group
                         label JSON URL
                         input.form-control(name="url" list="dl_json_url")
@@ -35,7 +35,7 @@ html
 
             h1 Story generator
             .row
-                form.col(target="image_result" action="/story" method="GET")
+                form.col(target="image_result" action="story" method="GET")
                     .form-group
                         label Image URL
                         input.form-control(name="url" list="dl_image_url")
