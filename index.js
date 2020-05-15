@@ -7,6 +7,7 @@ const request = require('request')
 const requestp = util.promisify(request)
 const jq = require('node-jq')
 const gm = require('gm').subClass({imageMagick: true})
+const getParams = require('./params').getParams
 
 const app = express()
 
@@ -20,7 +21,11 @@ app.use((req, res, next) => {
 })
 
 app.get('/crop', function(req, res) {
-  const {url, crop, gravity} = req.query
+  const {url, crop, gravity} = getParams(req.query, {
+    url: 'url',
+    crop: 'geometry',
+    gravity: 'gravity'
+  })
   gm(request(url))
     .gravity(gravity)
     .out('-crop', crop)
@@ -29,14 +34,21 @@ app.get('/crop', function(req, res) {
 })
 
 app.get('/story', function(req, res) {
-  const {url, crop, gravity} = req.query
+  const {url, crop, gravity} = getParams(req.query, {
+    url: 'url',
+    crop: 'geometry',
+    gravity: 'gravity'
+  })
   const query = qs.stringify({url, crop, gravity})
   const img = `/crop?${query}`
   res.render('story', {img, url: req.url})
 })
 
 app.get('/urls', async function(req, res) {
-  const {url, filter} = req.query
+  const {url, filter} = getParams(req.query, {
+    url: 'url',
+    filter: 'string'
+  })
   const {body} = await requestp(url)
   const urls = await jq.run(filter, body, {input: 'string'})
   res.status(200).type('json').send(urls)
