@@ -1,13 +1,15 @@
-const PORT = 3000
+require('dotenv').config()
+
+const PORT = process.env.PORT || 3000
+const HOST = process.env.HOST
 
 const util = require('util')
-const qs = require('querystring')
 const express = require('express')
 const request = require('request')
 const requestp = util.promisify(request)
 const jq = require('node-jq')
 const gm = require('gm').subClass({imageMagick: true})
-const getParams = require('./params').getParams
+const params = require('./params')
 
 const app = express()
 
@@ -21,7 +23,7 @@ app.use((req, res, next) => {
 })
 
 app.get('/crop', function(req, res) {
-  const {url, crop, gravity} = getParams(req.query, {
+  const {url, crop, gravity} = params.decode(req.query, {
     url: 'url',
     crop: 'geometry',
     gravity: 'gravity'
@@ -34,18 +36,19 @@ app.get('/crop', function(req, res) {
 })
 
 app.get('/story', function(req, res) {
-  const {url, crop, gravity} = getParams(req.query, {
+  const {url, crop, gravity} = params.decode(req.query, {
     url: 'url',
     crop: 'geometry',
     gravity: 'gravity'
   })
-  const query = qs.stringify({url, crop, gravity})
-  const img = `/crop?${query}`
-  res.render('story', {img, url: req.url})
+  const query = params.encode({url, crop, gravity})
+  const storyImg = `${req.protocol}://${HOST}/crop?${query}`
+  const storyUrl = `${req.protocol}://${HOST}/story?${query}`
+  res.render('story', {img: storyImg, url: storyUrl})
 })
 
 app.get('/urls', async function(req, res) {
-  const {url, filter} = getParams(req.query, {
+  const {url, filter} = params.decode(req.query, {
     url: 'url',
     filter: 'string'
   })

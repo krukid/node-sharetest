@@ -1,4 +1,6 @@
-const PARAM_TYPES = {
+const qs = require('querystring')
+
+const VALIDATORS = {
     string(v) {
         return typeof v === 'string'
     },
@@ -13,19 +15,38 @@ const PARAM_TYPES = {
     }
 }
 
-function getParam(value, type) {
-    if (value !== undefined && value !== null && type in PARAM_TYPES && PARAM_TYPES[type].call(PARAM_TYPES, value)) {
-        return value
-    }
-    return null
+function getValidatedParam(value, type) {
+    const valid =
+        value !== undefined
+        && value !== null
+        && VALIDATORS[type]
+        && VALIDATORS[type].call(VALIDATORS, value)
+    return valid ? value : null
 }
 
-function getParams(query, map) {
+function getValidatedParams(query, map) {
     return Object.keys(map).reduce((r, k) => {
-        r[k] = getParam(query[k], map[k])
+        r[k] = getValidatedParam(query[k], map[k])
         return r
     }, {})
 }
 
-exports.getParam = getParam;
-exports.getParams = getParams;
+function getDecodedQuery(query) {
+    return query.b64
+        ? qs.parse(Buffer.from(query.b64, 'base64').toString('ascii'))
+        : query
+}
+
+function getDecodedParams(query, map) {
+    const decodedQuery = getDecodedQuery(query)
+    return getValidatedParams(decodedQuery, map)
+}
+
+function getEncodedParams(query) {
+    const querystring = qs.stringify(query)
+    const querystring64 = Buffer.from(querystring).toString('base64')
+    return `b64=${querystring64}`
+}
+
+exports.decode = getDecodedParams
+exports.encode = getEncodedParams
