@@ -1,16 +1,26 @@
-version: "3"
+version: "3.4"
+x-proto: &proto
+  image: node
+  command: >
+    /bin/bash -c "yarn && yarn start"
+  working_dir: /app
+  volumes:
+    - .:/app
+  ports:
+    - "3000:3000"
+
 services:
-  sharepage: &foo
-    image: node
-    command: >
-      /bin/bash -c "yarn && yarn start"
-    working_dir: /app
-    volumes:
-      - .:/app
-    ports:
-      - "3000:3000"
+  sharepage:
+    <<: *proto
+    networks:
+      - www_default
 
   sharepage_dev:
-    <<: *foo
+    <<: *proto
     command: >
       /usr/bin/tail -f /dev/null
+
+networks:
+  www_default:
+    external:
+      name: www_default
