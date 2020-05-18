@@ -92,3 +92,26 @@ html
                 .col
                     label Image Output
                     iframe.w-100.bg-white.border.rounded(name="image_result" height="400")
+
+            hr
+
+            h1 Story server
+            .row
+                form.col
+                    .form-group
+                        label Story ID
+                        input.form-control
+
+                    .form-group
+                        label Title
+                        input.form-control
+
+                    .form-group
+                        label Image
+                        input.form-control(type="file")
+
+                    button.btn.btn-primary Save
+
+                .col
+                    label Image Preview
+                    canvas#image_preview.w-100.bg-white.border.rounded(height="400")
