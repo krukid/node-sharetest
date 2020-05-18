@@ -54,13 +54,41 @@ app.get('/urls', async function(req, res) {
   })
   const {body} = await requestp(url)
   const urls = await jq.run(filter, body, {input: 'string'})
-  res.status(200).type('json').send(urls)
+  res.render('urls', {urls})
 })
 
 app.get('/', function(req, res) {
-  res.render('index')
+  res.render('index', {wsUrl: `ws://${HOST}/ws`})
 })
 
-app.listen(PORT, function() {
+const server = app.listen(PORT, function() {
   console.log(`Listening on ${PORT}...`)
+})
+
+// create wss
+
+const WebSocket = require('ws')
+const wss = new WebSocket.Server({noServer: true})
+wss.on('connection', function(ws) {
+  ws.on('message', function(message) {
+    console.log('WS received from client: %s', message)
+    ws.send('WS server received from client: ' + message)
+  })
+})
+
+// mount wss at /ws
+
+const url = require('url')
+server.on('upgrade', function(request, socket, head) {
+  console.log('WS rcvd upgrade')
+  const pathname = url.parse(request.url).pathname
+
+  if (pathname === '/ws') {
+    wss.handleUpgrade(request, socket, head, function done(ws) {
+      wss.emit('connection', ws, request)
+    });
+  }
+  else {
+    socket.destroy()
+  }
 })

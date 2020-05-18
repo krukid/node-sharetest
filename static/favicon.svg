@@ -1,0 +1,29 @@
+<svg
+    viewBox="0 0 20 20"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="1.1"
+>
+    <defs>
+        <radialGradient id="myGradient">
+        <stop offset="70%" stop-color="#fff" />
+        <stop offset="95%" stop-color="#ccc" />
+        </radialGradient>
+    </defs>
+    <circle cx="10" cy="10" r="10" fill="url('#myGradient')" />
+    <text
+        style="
+        font-family:sans-serif;
+        font-size:0.7em;
+        font-weight:400;
+        letter-spacing:0.05em;
+        "
+        x="50%"
+        y="50%"
+        dominant-baseline="central"
+        text-anchor="middle"
+        fill="#000"
+    >
+        SP
+    </text>
+</svg>

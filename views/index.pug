@@ -1,15 +1,35 @@
 html
     head
+        title sharepage - test your social stories
+        link(rel="icon" type="image/svg+xml" href="favicon.svg")
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous")
+        script.
+            function ws() {
+                const sock = new WebSocket('#{wsUrl}')
+                sock.onopen = function() {
+                    console.log('ws open!')
+                    sock.send('hello!')
+                }
+                sock.onmessage = function(message) {
+                    console.log('ws rcvd', message)
+                }
+                sock.onerror = function() {
+                    console.log('ws error!')
+                }
+            }
+            ws()
+
 
     body.bg-light
         nav.navbar.navbar-dark.bg-dark
-            a.navbar-brand sharepage
+            a.navbar-brand(href="")
+                img.d-inline-block.align-top(src="favicon.svg" width="30" height="30" alt="" loading="lazy")
+                span.ml-2 sharepage
     
         .container-md.py-4
-            h1 Fetch images
+            h1 Image scraper
             .row
-                form.col(target="json_result" action="urls" method="GET")
+                form.col(target="json_result" action="urls" method="GET" name="json")
                     .form-group
                         label JSON URL
                         input.form-control(name="url" list="dl_json_url")
@@ -29,13 +49,13 @@ html
                 
                 .col
                     label JSON Output
-                    iframe.w-100.border.border-primary.rounded(name="json_result" height="400")
+                    iframe.w-100.bg-white.border.rounded(name="json_result" height="400")
 
             hr
 
             h1 Story generator
             .row
-                form.col(target="image_result" action="story" method="GET")
+                form.col(target="image_result" action="story" method="GET" name="image")
                     .form-group
                         label Image URL
                         input.form-control(name="url" list="dl_image_url")
@@ -71,4 +91,4 @@ html
 
                 .col
                     label Image Output
-                    iframe.w-100.border.border-primary.rounded(name="image_result" height="400")
+                    iframe.w-100.bg-white.border.rounded(name="image_result" height="400")
